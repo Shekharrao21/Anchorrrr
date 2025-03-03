@@ -30,8 +30,19 @@
             ordersDiv.innerHTML = orders.map((order, index) => `
                 <div>
                     <p><strong>${order.time}</strong> - ${order.name} ordered ${order.quantity} x ${order.dish}</p>
+                    <p>Status: <strong>${order.status || 'Pending'}</strong></p>
+                    <button onclick="updateOrderStatus(${index}, 'Completed')">Mark as Completed</button>
                 </div>
+                <hr>
             `).join('');
+        }
+
+        function updateOrderStatus(index, status) {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders[index].status = status;
+            localStorage.setItem('orders', JSON.stringify(orders));
+            showAllOrders();
+            alert(`Order marked as ${status}!`);
         }
 
         function clearOrders() {
