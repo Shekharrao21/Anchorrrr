@@ -1,48 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anchor Eats Admin Panel</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-        header { background-color: #ff6347; color: white; padding: 10px; text-align: center; }
-        .container { padding: 20px; }
-        .order { border: 1px solid #ddd; margin-bottom: 10px; padding: 10px; border-radius: 5px; }
-        button { background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; }
-    </style>
+    <title>Admin Panel - Anchor Eats</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Admin Panel - Anchor Eats</h1>
-    </header>
-    <div class="container" id="orderList"></div>
+    <script>
+        const password = prompt("Enter Admin Password:");
+        if (password !== "admin123") {
+            alert("Access Denied");
+            window.location.href = "index.html";
+        }
+    </script>
+
+    <h1>Admin Panel - All Orders</h1>
+    <div id="allOrders"></div>
+    <button onclick="clearOrders()">Clear All Orders</button>
 
     <script>
-        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        function showAllOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const ordersDiv = document.getElementById('allOrders');
+            
+            if (orders.length === 0) {
+                ordersDiv.innerHTML = "<p>No orders yet.</p>";
+                return;
+            }
 
-        function renderOrders() {
-            const orderList = document.getElementById('orderList');
-            orderList.innerHTML = orders.map(order => `
-                <div class="order">
-                    <h3>Order #${order.id}</h3>
-                    <p>User: ${order.user}</p>
-                    <p>Status: ${order.status}</p>
-                    <p>Items: ${order.items.map(item => `${item.itemName} - ₹${item.price}`).join(', ')}</p>
-                    <button onclick="updateStatus(${order.id}, 'Completed')">Mark Completed</button>
+            ordersDiv.innerHTML = orders.map((order, index) => `
+                <div>
+                    <p><strong>${order.time}</strong> - ${order.name} ordered ${order.quantity} x ${order.dish}</p>
                 </div>
             `).join('');
         }
 
-        function updateStatus(orderId, status) {
-            const updatedOrders = orders.map(order =>
-                order.id === orderId ? { ...order, status } : order
-            );
-            localStorage.setItem('orders', JSON.stringify(updatedOrders));
-            location.reload();
+        function clearOrders() {
+            localStorage.removeItem('orders');
+            showAllOrders();
+            alert("All orders cleared!");
         }
 
-        renderOrders();
+        window.onload = showAllOrders;
     </script>
 </body>
 </html>
