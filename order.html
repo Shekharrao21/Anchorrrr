@@ -1,63 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Place Order - Anchor Eats</title>
+    <title>My Orders - Anchor Eats</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Place Your Order</h1>
-    
-    <form id="orderForm">
-        <label for="name">Your Name:</label>
-        <input type="text" id="name" name="name" required><br><br>
-
-        <label for="dish">Select Dish:</label>
-        <select id="dish" name="dish" required>
-            <option value="chapati">Chapati</option>
-            <option value="paneer">Paneer</option>
-            <option value="rice">Rice</option>
-            <option value="dal">Dal</option>
-        </select><br><br>
-
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" min="1" value="1" required><br><br>
-
-        <button type="button" onclick="placeOrder()">Order Now</button>
-    </form>
-
-    <h2>Your Order History</h2>
-    <div id="orderHistory"></div>
+    <h1>My Order History</h1>
+    <div id="userOrders"></div>
 
     <script>
-        function placeOrder() {
-            const name = document.getElementById('name').value;
-            const dish = document.getElementById('dish').value;
-            const quantity = document.getElementById('quantity').value;
+        const userName = prompt("Enter your name to view your orders:");
 
-            const order = {
-                name,
-                dish,
-                quantity,
-                time: new Date().toLocaleString()
-            };
-
-            let orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders.push(order);
-            localStorage.setItem('orders', JSON.stringify(orders));
-
-            alert("Order placed successfully!");
-            showOrderHistory();
-        }
-
-        function showOrderHistory() {
+        function showUserOrders() {
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
-            const historyDiv = document.getElementById('orderHistory');
-            historyDiv.innerHTML = orders.map(order => `
-                <p>${order.time} - ${order.name} ordered ${order.quantity} x ${order.dish}</p>
+            const userOrders = orders.filter(order => order.name.toLowerCase() === userName.toLowerCase());
+            const ordersDiv = document.getElementById('userOrders');
+
+            if (userOrders.length === 0) {
+                ordersDiv.innerHTML = "<p>No orders found for your name.</p>";
+                return;
+            }
+
+            ordersDiv.innerHTML = userOrders.map(order => `
+                <div>
+                    <p><strong>${order.time}</strong> - ${order.quantity} x ${order.dish}</p>
+                    <p>Status: <strong>${order.status || 'Pending'}</strong></p>
+                </div>
+                <hr>
             `).join('');
         }
 
-        window.onload = showOrderHistory;
+        window.onload = showUserOrders;
     </script>
 </body>
 </html>
