@@ -1,11 +1,48 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Panel - Anchor Eats</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anchor Eats Admin Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
+        header { background-color: #ff6347; color: white; padding: 10px; text-align: center; }
+        .container { padding: 20px; }
+        .order { border: 1px solid #ddd; margin-bottom: 10px; padding: 10px; border-radius: 5px; }
+        button { background-color: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+    </style>
 </head>
 <body>
-    <h1>Admin Panel</h1>
-    <p>View and manage customer orders here.</p>
+    <header>
+        <h1>Admin Panel - Anchor Eats</h1>
+    </header>
+    <div class="container" id="orderList"></div>
+
+    <script>
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+        function renderOrders() {
+            const orderList = document.getElementById('orderList');
+            orderList.innerHTML = orders.map(order => `
+                <div class="order">
+                    <h3>Order #${order.id}</h3>
+                    <p>User: ${order.user}</p>
+                    <p>Status: ${order.status}</p>
+                    <p>Items: ${order.items.map(item => `${item.itemName} - ₹${item.price}`).join(', ')}</p>
+                    <button onclick="updateStatus(${order.id}, 'Completed')">Mark Completed</button>
+                </div>
+            `).join('');
+        }
+
+        function updateStatus(orderId, status) {
+            const updatedOrders = orders.map(order =>
+                order.id === orderId ? { ...order, status } : order
+            );
+            localStorage.setItem('orders', JSON.stringify(updatedOrders));
+            location.reload();
+        }
+
+        renderOrders();
+    </script>
 </body>
 </html>
